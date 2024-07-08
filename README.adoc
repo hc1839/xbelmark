@@ -1,0 +1,276 @@
+= XBELmark
+:nofooter:
+
+XBELmark is a program suite written in {cpp}, Java, and C# for facilitating the
+use and exchange of Internet bookmarks as
+https://pyxml.sourceforge.net/topics/xbel/[XBEL].
+
+XBELmark has an XSL stylesheet for dynamically transforming XBEL into XHTML5
+with collapsible sections using the XSLT 1.0 processor of a web browser. With
+the provided XSLT extension, XBELmark can also produce XHTML5 that is
+compatible with the HTML used by Firefox for importing bookmarks with the
+timestamps preserved.
+
+XBELmark {cpp} has a Qt 6 subprogram that is mainly targeted at Windows 11
+users (but can also be used by Linux users) for pasting a URL from the
+clipboard as an Internet shortcut in a bookmark file format. Supported bookmark
+file formats are XBEL (with the `.xbel` extension) and URL (with the `.url`
+extension). Within Windows File Explorer, a new bookmark file is automatically
+highlighted when pasted using the context menu. Favicon is not supported.
+
+== Building
+
+=== {cpp} Version
+
+This is the recommended version of XBELmark for Windows 11 users but can also
+be used in Linux. libxml2, libxslt, and Qt 6 are required.
+
+==== Windows 11
+
+MinGW-w64 under MSYS2 with the UCRT64 environment is used in building XBELmark.
+To set up MSYS2, follow the
+https://code.visualstudio.com/docs/cpp/config-mingw[instructions] provided by
+Visual Studio Code. In addition to the provided instructions, add the `MSYSTEM`
+environment variable with `UCRT64` as its value. To be able to start MSYS2 from
+the Windows command prompt, add `C:\msys64\bin` to the `PATH` environment
+variable after `C:\msys64\ucrt64\bin` (such that the former has a lower search
+priority than the latter). This allows MSYS2 to be started by typing `bash -l`
+on the Windows command prompt.
+
+After MSYS2 and the gcc toolchain are installed, install the following
+dependencies using `pacman -S` under MSYS2 (not the Windows command prompt):
+
+* `mingw-w64-ucrt-x86_64-cmake`
+* `mingw-w64-ucrt-x86_64-libxml2`
+* `mingw-w64-ucrt-x86_64-libxslt`
+* `mingw-w64-ucrt-x86_64-ninja`
+* `mingw-w64-ucrt-x86_64-qt6-base`
+* `mingw-w64-ucrt-x86_64-ruby`
+
+MSYS2 has a quirk in that the directory containing the libxml2 headers needs to
+be exported in the `CPATH` environment variable in order for the project build
+to find them:
+
+----
+export CPATH=C:/msys64/ucrt64/include/libxml2\;${CPATH}
+----
+
+From the root of the project, XBELmark {cpp} can be built by
+
+----
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX="/c/Program Files/xbelmark" ..
+ninja install
+----
+
+To install the built XBELmark {cpp}, see xref:win11-install[].
+
+==== Linux
+
+The dependencies are assumed to be at standard locations findable by CMake. If
+not, their header and library directories can be exported in the `CPATH` and
+`LIBRARY_PATH` environment variables, respectively, for the project build to
+find.
+
+From the root of the project, XBELmark {cpp} can be built by
+
+----
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=${HOME}/.local/opt/xbelmark ..
+make install
+----
+
+=== Java Version
+
+This is the recommended version of XBELmark for Linux users and has all the
+features of the {cpp} version except the automatic highlighting of a new
+bookmark file within Windows File Explorer. Assuming Apache Maven is installed,
+XBELmark Java can be built from the root of the project by
+
+----
+mvn package
+----
+
+The resulting JAR files are in `target`. Copy
+`target/xbelmark-0.1.0-jar-with-dependencies.jar` to the `bin` directory of the
+installation path (with possible renaming of the JAR file), and copy everything
+under the `local` directory of the project to the root of the installation
+path.
+
+If the Java version is to be used for adding an XBELmark shortcut to the
+Windows context menu, `javaw.exe` should be used instead of `java.exe` to avoid
+the Windows command prompt from appearing every time a URL is being pasted. The
+`javaw.exe` executable is located at `C:\Program Files\Common
+Files\Oracle\Java\javapath`.
+
+To install the built XBELmark Java for Windows 11, see xref:win11-install[],
+and adjust the commands accordingly.
+
+=== C# Version
+
+This version of XBELmark currently only supports the `paste` subcommand and
+does not have the automatic highlighting of a new bookmark file within Windows
+File Explorer. The executables built for Windows and Linux differ slightly from
+each other. When the project is built for Windows, the executable displays any
+error message as a message box, and the bookmark must be written as a file and
+cannot be printed to the standard output on the command prompt. When the
+project is built for Linux, the executable prints any error message to the
+standard error, and the bookmark URL must be given on the command line.
+Assuming .NET 8 SDK is installed, XBELmark C# can be built from the root of the
+project by
+
+----
+dotnet publish
+----
+
+Despite the command, the resulting DLL binary (`xbelmark.dll`) and executable
+(`xbelmark.exe`/`xbelmark`) are platform-specific because of conditional
+compilation. Copy everything under `bin/Release/net8.0/publish` to the `bin`
+directory of the installation path, and copy everything under the `local`
+directory of the project to the root of the installation path.
+
+To install the built XBELmark C# for Windows 11, see xref:win11-install[], and
+adjust the commands accordingly.
+
+[#win11-install]
+== Windows 11 Installation
+
+=== Context Menu
+
+To add an XBELmark {cpp} shortcut to the Windows context menu, open the
+registry editor, and create a key under
+`HKEY_CLASSES_ROOT\Directory\Background\shell` using an appropriate name for
+the key (such as `Paste as bookmark`). Create another key named `Command` under
+the key that was just created. Set the `(Default)` value of the `Command` key
+to
+
+----
+"C:\Program Files\xbelmark\bin\xbelmarkw.exe" paste -f [format]
+----
+
+where `[format]` can be `XBEL` or `URL` (case sensitive) for their respective
+file formats. This shortcut allows a URL from the clipboard to be pasted as a
+bookmark file using the context menu.
+
+If this does not immediately take effect, try restarting Windows.
+
+=== Opening XBEL with Ruby
+
+The URL file type should already be associated with the default web browser.
+However, the XBEL file type is most likely not. For opening an XBEL file with a
+web browser, the `.xbel` file extension needs to be associated with a file
+type, which in turn needs to be associated with a command that executes a Ruby
+script. Open the Windows command prompt (not MSYS2) as an administrator, and
+type the following commands:
+
+----
+cmd /c assoc .xbel=XBEL
+cmd /c ftype XBEL=C:\msys64\ucrt64\bin\rubyw.exe ^
+  "C:\Program Files\xbelmark\bin\open-xbel.rb" ^
+  '"C:\Program Files\Mozilla Firefox\firefox.exe"' "%1"
+----
+
+where Firefox is assumed and should be changed to the desired browser. `XBEL`
+is the file type used in the commands, but it is arbitrary and can be any name.
+However, `.xbel` is the file extension used by XBELmark and cannot be changed.
+
+If this does not immediately take effect, try restarting Windows.
+
+== Command-Line and Web Usage
+
+This section documents the usage of XBELmark from the command line and from a
+web browser.
+
+=== Command Line
+
+Commands begin with `xbelmark` are applicable to any version of XBELmark being
+used unless indicated otherwise. For the Java version, the `xbelmark` command
+would be replaced by `java -jar` followed by the path to the JAR file (with the
+dependencies packaged) and then the arguments.
+
+For XBELmark {cpp} in Windows, the executable `xbelmarkw` (which is not built
+for Linux) is for the context menu so that the Windows command prompt does not
+appear when a URL is being pasted. This makes `xbelmarkw` unusable from the
+command line. To use XBELmark from the command line, the executable `xbelmark`
+is built for both Windows and Linux, but the `paste` subcommand still requires
+Qt, which makes such a subcommand unusable on a remote machine for example. In
+such a scenario, the Java version should be used.
+
+For help on the available subcommands of XBELmark,
+
+----
+xbelmark --help
+----
+
+For help on the options accepted by a subcommand,
+
+----
+xbelmark [subcommand] --help
+----
+
+Assuming the directory that contains the `xbelmark` executable is in the `PATH`
+environment variable, an XBEL file can be transformed into XHTML5 on Windows
+MSYS2 with the following command ({cpp} version):
+
+----
+xbelmark xslt \
+  "/c/Program Files/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl" \
+  bookmarks.xbel
+----
+
+Similarly, to transform an XBEL file into XHTML5 in Linux ({cpp} version),
+
+----
+xbelmark xslt \
+  ${HOME}/.local/opt/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
+  bookmarks.xbel
+----
+
+The JAR file with the dependencies packaged contains the XSLT processor from
+Apache Xalan. To transform an XBEL file into XHTML5 using the Java version, the
+`xslt` subcommand is still required, but its
+https://xalan.apache.org/xalan-j/commandline.html[arguments] are passed
+unmodified to Apache Xalan:
+
+----
+java -jar target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
+  -XSL local/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
+  -IN bookmarks.xbel
+----
+
+The `paste` subcommand has the same syntax for its arguments across all
+versions of XBELmark. To paste a URL from the clipboard as a bookmark file in
+the XBEL format in the current directory,
+
+----
+xbelmark paste
+----
+
+since XBEL is the default format. To print a bookmark of a given URL in the URL
+format to the standard output,
+
+----
+xbelmark paste -f URL --uri "https://example.com/" --stdout
+----
+
+Note that the C# version for Windows does not support the printing of a
+bookmark to the standard output.
+
+=== Web Browser
+
+To dynamically transform an XBEL file served by an HTTP server into XHTML5 by a
+web browser, add the following processing instruction above the `xbel` element
+of the XBEL document:
+
+----
+<?xml-stylesheet type="text/xsl" href="/share/xbelmark/stylesheet/firefox/xhtml5.xsl"?>
+----
+
+where the URL to the XSL stylesheet should be appropriately adjusted. When an
+XBEL file is served by an HTTP server, the web browser applies the XSL
+stylesheet to it and displays its XHTML5 transform as a web page with
+collapsible sections and clickable links. JavaScript is part of the XHTML5
+transform and must be enabled. An XBEL file may need to have the `.xml`
+extension for the web browser to apply the XSL stylesheet.

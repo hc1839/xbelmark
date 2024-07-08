@@ -1,0 +1,6 @@
+#ifndef XBELMARK_H
+#define XBELMARK_H
+
+@HDR_INCS@
+
+#endif

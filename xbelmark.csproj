@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(OS)' == 'Windows_NT'">
+      <PropertyGroup>
+        <DefineConstants>WINDOWS_NT</DefineConstants>
+        <OutputType>winexe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <OutputType>exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61"/>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+  </ItemGroup>
+</Project>
