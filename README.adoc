@@ -11,24 +11,27 @@ the provided XSLT extension, XBELmark can also produce XHTML5 that is
 compatible with the HTML used by Firefox for importing bookmarks with the
 timestamps preserved.
 
-XBELmark {cpp} has a Qt 6 subprogram that is mainly targeted at Windows 11
-users (but can also be used by Linux users) for pasting a URL from the
-clipboard as an Internet shortcut in a bookmark file format. Supported bookmark
-file formats are XBEL (with the `.xbel` extension) and URL (with the `.url`
-extension). Within Windows File Explorer, a new bookmark file is automatically
-highlighted when pasted using the context menu. Favicon is not supported.
+XBELmark has a Qt version that is mainly targeted at Windows 11 users (but can
+also be used by Linux users) for pasting a URL from the clipboard as an
+Internet shortcut in a bookmark file format. Supported bookmark file formats
+are XBEL (with the `.xbel` extension) and URL (with the `.url` extension).
+Within Windows File Explorer, a new bookmark file is automatically highlighted
+when pasted using the context menu. Favicon is not supported.
 
 == Building
 
-=== {cpp} Version
+Regardless of the version of XBELmark being built, `${BASEDIR}` refers to the
+root of the project (e.g., `${BASEDIR}/qt` contains the Qt version).
+
+=== Qt Version
 
 This is the recommended version of XBELmark for Windows 11 users but can also
 be used in Linux. libxml2, libxslt, and Qt 6 are required.
 
 ==== Windows 11
 
-MinGW-w64 under MSYS2 with the UCRT64 environment is used in building XBELmark.
-To set up MSYS2, follow the
+MinGW-w64 under MSYS2 with the UCRT64 environment is used in building the Qt
+version. To set up MSYS2, follow the
 https://code.visualstudio.com/docs/cpp/config-mingw[instructions] provided by
 Visual Studio Code. In addition to the provided instructions, add the `MSYSTEM`
 environment variable with `UCRT64` as its value. To be able to start MSYS2 from
@@ -55,7 +58,7 @@ to find them:
 export CPATH=C:/msys64/ucrt64/include/libxml2\;${CPATH}
 ----
 
-From the root of the project, XBELmark {cpp} can be built by
+From `${BASEDIR}/qt`, the Qt version can be built by
 
 ----
 mkdir build
@@ -64,7 +67,7 @@ cmake -DCMAKE_INSTALL_PREFIX="/c/Program Files/xbelmark" ..
 ninja install
 ----
 
-To install the built XBELmark {cpp}, see xref:win11-install[].
+To install the built project, see xref:win11-install[].
 
 ==== Linux
 
@@ -73,7 +76,7 @@ not, their header and library directories can be exported in the `CPATH` and
 `LIBRARY_PATH` environment variables, respectively, for the project build to
 find.
 
-From the root of the project, XBELmark {cpp} can be built by
+From `${BASEDIR}/qt`, the Qt version can be built by
 
 ----
 mkdir build
@@ -85,19 +88,19 @@ make install
 === Java Version
 
 This is the recommended version of XBELmark for Linux users and has all the
-features of the {cpp} version except the automatic highlighting of a new
-bookmark file within Windows File Explorer. Assuming Apache Maven is installed,
-XBELmark Java can be built from the root of the project by
+features of the Qt version except the automatic highlighting of a new bookmark
+file within Windows File Explorer. Assuming Apache Maven is installed, the Java
+version can be built from `${BASEDIR}/java` by
 
 ----
 mvn package
 ----
 
-The resulting JAR files are in `target`. Copy
-`target/xbelmark-0.1.0-jar-with-dependencies.jar` to the `bin` directory of the
-installation path (with possible renaming of the JAR file), and copy everything
-under the `local` directory of the project to the root of the installation
-path.
+The resulting JAR files are in `${BASEDIR}/java/target`. Copy
+`${BASEDIR}/java/target/xbelmark-0.1.0-jar-with-dependencies.jar` to the `bin`
+directory of the installation path (with possible renaming of the JAR file),
+and copy everything under the `${BASEDIR}/local` directory of the project to
+the root of the installation path.
 
 If the Java version is to be used for adding an XBELmark shortcut to the
 Windows context menu, `javaw.exe` should be used instead of `java.exe` to avoid
@@ -105,10 +108,10 @@ the Windows command prompt from appearing every time a URL is being pasted. The
 `javaw.exe` executable is located at `C:\Program Files\Common
 Files\Oracle\Java\javapath`.
 
-To install the built XBELmark Java for Windows 11, see xref:win11-install[],
-and adjust the commands accordingly.
+To install the built project for Windows 11, see xref:win11-install[], and
+adjust the commands accordingly.
 
-=== C# Version
+=== .NET Version
 
 This version of XBELmark currently only supports the `paste` subcommand and
 does not have the automatic highlighting of a new bookmark file within Windows
@@ -117,21 +120,21 @@ each other. When the project is built for Windows, the executable displays any
 error message as a message box, and the bookmark must be written as a file and
 cannot be printed to the standard output on the command prompt. When the
 project is built for Linux, the executable prints any error message to the
-standard error, and the bookmark URL must be given on the command line.
-Assuming .NET 8 SDK is installed, XBELmark C# can be built from the root of the
-project by
+standard error, and the bookmark URL must be given on the command line and not
+from the clipboard. Assuming .NET 8 SDK is installed, the .NET version can be
+built from `${BASEDIR}/dotnet` by
 
 ----
 dotnet publish
 ----
 
-Despite the command, the resulting DLL binary (`xbelmark.dll`) and executable
-(`xbelmark.exe`/`xbelmark`) are platform-specific because of conditional
-compilation. Copy everything under `bin/Release/net8.0/publish` to the `bin`
-directory of the installation path, and copy everything under the `local`
-directory of the project to the root of the installation path.
+Despite the command, the resulting DLL binary (`xbelmark.dll`) is
+platform-specific because of conditional compilation. Copy everything under
+`${BASEDIR}/dotnet/bin/Release/net8.0/publish` to the `bin` directory of the
+installation path, and copy everything under the `${BASEDIR}/local` directory
+of the project to the root of the installation path.
 
-To install the built XBELmark C# for Windows 11, see xref:win11-install[], and
+To install the built project for Windows 11, see xref:win11-install[], and
 adjust the commands accordingly.
 
 [#win11-install]
@@ -147,12 +150,14 @@ the key that was just created. Set the `(Default)` value of the `Command` key
 to
 
 ----
-"C:\Program Files\xbelmark\bin\xbelmarkw.exe" paste -f [format]
+"C:\Program Files\xbelmark\bin\xbelmarkw.exe" paste --format [format] --spaces
 ----
 
-where `[format]` can be `XBEL` or `URL` (case sensitive) for their respective
+where `[format]` can be `URL` or `XBEL` (case sensitive) for their respective
 file formats. This shortcut allows a URL from the clipboard to be pasted as a
-bookmark file using the context menu.
+bookmark file using the context menu. The `--spaces` option preserves the
+spaces in the file name of a bookmark, which is usually desired for Windows
+users.
 
 If this does not immediately take effect, try restarting Windows.
 
@@ -190,7 +195,7 @@ used unless indicated otherwise. For the Java version, the `xbelmark` command
 would be replaced by `java -jar` followed by the path to the JAR file (with the
 dependencies packaged) and then the arguments.
 
-For XBELmark {cpp} in Windows, the executable `xbelmarkw` (which is not built
+For the Qt version in Windows, the executable `xbelmarkw` (which is not built
 for Linux) is for the context menu so that the Windows command prompt does not
 appear when a URL is being pasted. This makes `xbelmarkw` unusable from the
 command line. To use XBELmark from the command line, the executable `xbelmark`
@@ -212,33 +217,44 @@ xbelmark [subcommand] --help
 
 Assuming the directory that contains the `xbelmark` executable is in the `PATH`
 environment variable, an XBEL file can be transformed into XHTML5 on Windows
-MSYS2 with the following command ({cpp} version):
+MSYS2 with the following command (Qt version):
 
 ----
 xbelmark xslt \
-  "/c/Program Files/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl" \
-  bookmarks.xbel
+  --xsl "/c/Program Files/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl" \
+  --in bookmarks.xbel
 ----
 
-Similarly, to transform an XBEL file into XHTML5 in Linux ({cpp} version),
+Similarly, to transform an XBEL file into XHTML5 in Linux (Qt version),
 
 ----
 xbelmark xslt \
-  ${HOME}/.local/opt/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
-  bookmarks.xbel
+  --xsl ${HOME}/.local/opt/xbelmark/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
+  --in bookmarks.xbel
 ----
 
-The JAR file with the dependencies packaged contains the XSLT processor from
-Apache Xalan. To transform an XBEL file into XHTML5 using the Java version, the
+For the Java version, the JAR file with the dependencies packaged contains the
+XSLT processor from Apache Xalan. To transform an XBEL file into XHTML5, the
 `xslt` subcommand is still required, but its
 https://xalan.apache.org/xalan-j/commandline.html[arguments] are passed
 unmodified to Apache Xalan:
 
 ----
-java -jar target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
-  -XSL local/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
+java -jar ${BASEDIR}/java/target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
+  -XSL ${BASEDIR}/local/share/xbelmark/stylesheet/firefox/xhtml5.xsl \
   -IN bookmarks.xbel
 ----
+
+XSL parameters are passed differently between the Qt version and the Java
+version. For the Qt version, parameters are passed as `--param [name]=[value]`.
+For the Java version, parameters are passed as `-PARAM [name] [value]`. For
+both versions, the parameter value is not quoted. The available XSL parameters
+with their default values in brackets are
+
+* `bookmarks.title` [`'Bookmarks'`]
+* `bookmarks.menu.name` [`'Bookmarks Menu'`]
+* `folder.title` [`'[Folder Name]'`]
+* `folded.default` [`'yes'`]
 
 The `paste` subcommand has the same syntax for its arguments across all
 versions of XBELmark. To paste a URL from the clipboard as a bookmark file in
@@ -248,14 +264,14 @@ the XBEL format in the current directory,
 xbelmark paste
 ----
 
-since XBEL is the default format. To print a bookmark of a given URL in the URL
-format to the standard output,
+XBEL is the default format when no format is specified. To print a bookmark of
+a given URL in the URL format to the standard output,
 
 ----
-xbelmark paste -f URL --uri "https://example.com/" --stdout
+xbelmark paste --format URL --uri "https://example.com/" --stdout
 ----
 
-Note that the C# version for Windows does not support the printing of a
+Note that the .NET version for Windows does not support the printing of a
 bookmark to the standard output.
 
 === Web Browser
