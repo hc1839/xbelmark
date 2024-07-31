@@ -25,6 +25,7 @@
   <xsl:variable name="vendor.id" select="system-property('xsl:vendor')"/>
   <xsl:variable name="vendor.libxslt.id" select="'libxslt'"/>
   <xsl:variable name="vendor.xalan.id" select="'Apache Software Foundation'"/>
+  <xsl:variable name="vendor.dotnet.id" select="'Microsoft'"/>
 
   <xsl:template match="*|text()"/>
 
@@ -182,7 +183,9 @@
 
   <!-- When the folder was added. -->
   <xsl:template match="/xbel//folder/@added">
-    <xsl:if test="$vendor.id = $vendor.xalan.id or $vendor.id = $vendor.libxslt.id">
+    <xsl:if test="$vendor.id = $vendor.libxslt.id or
+                  $vendor.id = $vendor.xalan.id or
+                  $vendor.id = $vendor.dotnet.id">
       <xsl:attribute name="add_date">
         <xsl:value-of select="ext:dateTimeToUnix(.)"/>
       </xsl:attribute>
@@ -194,7 +197,9 @@
 
   <!-- When the bookmark was added. -->
   <xsl:template match="/xbel//bookmark/@added">
-    <xsl:if test="$vendor.id = $vendor.xalan.id or $vendor.id = $vendor.libxslt.id">
+    <xsl:if test="$vendor.id = $vendor.libxslt.id or
+                  $vendor.id = $vendor.xalan.id or
+                  $vendor.id = $vendor.dotnet.id">
       <xsl:attribute name="add_date">
         <xsl:value-of select="ext:dateTimeToUnix(.)"/>
       </xsl:attribute>
@@ -203,7 +208,9 @@
 
   <!-- When the bookmark was modified. -->
   <xsl:template match="/xbel//bookmark/@modified">
-    <xsl:if test="$vendor.id = $vendor.xalan.id or $vendor.id = $vendor.libxslt.id">
+    <xsl:if test="$vendor.id = $vendor.libxslt.id or
+                  $vendor.id = $vendor.xalan.id or
+                  $vendor.id = $vendor.dotnet.id">
       <xsl:attribute name="last_modified">
         <xsl:value-of select="ext:dateTimeToUnix(.)"/>
       </xsl:attribute>

@@ -96,6 +96,34 @@ public class Program
             },
             formatOption, uriOption, spacesOption, stdoutOption);
 
+        var xsltCommand = new Command("xslt", "Transform XBEL into XHTML5.");
+        rootCommand.AddCommand(xsltCommand);
+        var xslOption = new Option<string>(
+            name: "--xsl", description: "Path to the XSL stylesheet.");
+        xsltCommand.AddOption(xslOption);
+        var inOption = new Option<string>(
+            name: "--in", description: "Path to the input document.");
+        xsltCommand.AddOption(inOption);
+        var paramOption = new Option<List<string>>(
+            name: "--param",
+            description:
+                "Name and value of each parameter as `[name]=[value]`.");
+        xsltCommand.AddOption(paramOption);
+        paramOption.Arity = ArgumentArity.ZeroOrMore;
+        xsltCommand.SetHandler((stylesheetPath, inputDocPath, paramList) =>
+            {
+                try
+                {
+                    Xslt.Main.Execute(stylesheetPath, inputDocPath, paramList);
+                }
+                catch (Exception e)
+                {
+                    ShowMessage.Error(e.Message);
+                    exitStatus = 1;
+                }
+            },
+            xslOption, inOption, paramOption);
+
         try
         {
             rootCommand.Invoke(args);

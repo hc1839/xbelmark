@@ -113,16 +113,16 @@ adjust the commands accordingly.
 
 === .NET Version
 
-This version of XBELmark currently only supports the `paste` subcommand and
-does not have the automatic highlighting of a new bookmark file within Windows
-File Explorer. The executables built for Windows and Linux differ slightly from
-each other. When the project is built for Windows, the executable displays any
-error message as a message box, and the bookmark must be written as a file and
-cannot be printed to the standard output on the command prompt. When the
-project is built for Linux, the executable prints any error message to the
-standard error, and the bookmark URL must be given on the command line and not
-from the clipboard. Assuming .NET 8 SDK is installed, the .NET version can be
-built from `${BASEDIR}/dotnet` by
+This version of XBELmark has all the features of the Qt version except the
+automatic highlighting of a new bookmark file within Windows File Explorer. The
+executables built for Windows and Linux differ slightly from each other. When
+the project is built for Windows, the executable displays any error message as
+a message box, and the bookmark must be written as a file and cannot be printed
+to the standard output on the command prompt. When the project is built for
+Linux, the executable prints any error message to the standard error, and the
+bookmark URL must be given on the command line and not from the clipboard.
+Assuming .NET 8 SDK is installed, the .NET version can be built from
+`${BASEDIR}/dotnet` by
 
 ----
 dotnet publish
@@ -217,7 +217,7 @@ xbelmark [subcommand] --help
 
 Assuming the directory that contains the `xbelmark` executable is in the `PATH`
 environment variable, an XBEL file can be transformed into XHTML5 on Windows
-MSYS2 with the following command (Qt version):
+MSYS2 with the following command (Qt and .NET versions):
 
 ----
 xbelmark xslt \
@@ -225,7 +225,8 @@ xbelmark xslt \
   --in bookmarks.xbel
 ----
 
-Similarly, to transform an XBEL file into XHTML5 in Linux (Qt version),
+Similarly, to transform an XBEL file into XHTML5 in Linux (Qt and .NET
+versions),
 
 ----
 xbelmark xslt \
@@ -237,7 +238,7 @@ For the Java version, the JAR file with the dependencies packaged contains the
 XSLT processor from Apache Xalan. To transform an XBEL file into XHTML5, the
 `xslt` subcommand is still required, but its
 https://xalan.apache.org/xalan-j/commandline.html[arguments] are passed
-unmodified to Apache Xalan:
+unmodified to Apache Xalan (note the single hyphens):
 
 ----
 java -jar ${BASEDIR}/java/target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
@@ -245,7 +246,7 @@ java -jar ${BASEDIR}/java/target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
   -IN bookmarks.xbel
 ----
 
-XSL parameters are passed differently between the Qt version and the Java
+XSL parameters are passed differently between the Qt/.NET version and the Java
 version. For the Qt version, parameters are passed as `--param [name]=[value]`.
 For the Java version, parameters are passed as `-PARAM [name] [value]`. For
 both versions, the parameter value is not quoted. The available XSL parameters
