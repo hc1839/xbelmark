@@ -38,8 +38,8 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <title>
-          <xsl:call-template name="title">
-            <xsl:with-param name="title.element" select="title"/>
+          <xsl:call-template name="value-of-or-default">
+            <xsl:with-param name="node" select="title"/>
             <xsl:with-param name="default" select="$bookmarks.title"/>
           </xsl:call-template>
         </title>
@@ -130,8 +130,8 @@
       <h3 class="foldable {$folded.class}">
         <xsl:apply-templates select="@added"/>
         <xsl:apply-templates select="info/metadata/moz:*"/>
-        <xsl:call-template name="title">
-          <xsl:with-param name="title.element" select="title"/>
+        <xsl:call-template name="value-of-or-default">
+          <xsl:with-param name="node" select="title"/>
           <xsl:with-param name="default" select="$folder.title"/>
         </xsl:call-template>
       </h3>
@@ -152,8 +152,8 @@
       <a href="{@href}">
         <xsl:apply-templates select="@added|@modified"/>
         <xsl:apply-templates select="info/metadata/moz:*"/>
-        <xsl:call-template name="title">
-          <xsl:with-param name="title.element" select="title"/>
+        <xsl:call-template name="value-of-or-default">
+          <xsl:with-param name="node" select="title"/>
           <xsl:with-param name="default" select="@href"/>
         </xsl:call-template>
       </a>
@@ -165,20 +165,6 @@
     <xsl:attribute name="{local-name(.)}">
       <xsl:value-of select="."/>
     </xsl:attribute>
-  </xsl:template>
-
-  <!-- Title of an XBEL entity. -->
-  <xsl:template name="title">
-    <xsl:param name="title.element"/>
-    <xsl:param name="default" select="''"/>
-    <xsl:choose>
-      <xsl:when test="title">
-        <xsl:value-of select="title"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$default"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 
   <!-- When the folder was added. -->
@@ -215,5 +201,19 @@
         <xsl:value-of select="ext:dateTimeToUnix(.)"/>
       </xsl:attribute>
     </xsl:if>
+  </xsl:template>
+
+  <!-- Value of a node or a default. -->
+  <xsl:template name="value-of-or-default">
+    <xsl:param name="node"/>
+    <xsl:param name="default" select="''"/>
+    <xsl:choose>
+      <xsl:when test="$node">
+        <xsl:value-of select="$node"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$default"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 </xsl:stylesheet>

@@ -52,4 +52,3 @@ public static class FormatExt
                 $"Not expected enumeration value: `{format}`.")
         };
 }
-
