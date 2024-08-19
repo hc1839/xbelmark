@@ -195,7 +195,13 @@ public class Paste {
       bookmarkFileName = bookmarkFileName.replaceAll("\\s+", isSpaces ? " " : "_");
       bookmarkFileName = RESERVED_RE.matcher(bookmarkFileName).replaceAll("_");
       bookmarkFileName += bookmarkFormat.name().toLowerCase();
+
       Path bookmarkFilePath = Paths.get("").toAbsolutePath().resolve(bookmarkFileName);
+      if (bookmarkFilePath.toFile().exists()) {
+        ShowMessage.error(
+            "Bookmark with the same file name exists:\n" + bookmarkFilePath.toString());
+      }
+
       try (var fileWriter = new FileWriter(bookmarkFilePath.toFile())) {
         fileWriter.write(bookmarkText);
         fileWriter.write("\n");

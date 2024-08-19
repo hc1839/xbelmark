@@ -6,11 +6,10 @@
                 extension-element-prefixes="ext"
                 exclude-result-prefixes="moz"
                 version="1.0">
-
-  <!-- Title of the bookmarks html. -->
+  <!-- HTML title of the output. -->
   <xsl:param name="bookmarks.title" select="'Bookmarks'"/>
 
-  <!-- Heading name of the bookmarks html. -->
+  <!-- Heading name of the output. -->
   <xsl:param name="bookmarks.menu.name" select="'Bookmarks Menu'"/>
 
   <!-- Display name of a folder with no title. -->
@@ -70,7 +69,7 @@
           <xsl:value-of select="$bookmarks.menu.name"/>
         </h1>
         <dl>
-          <xsl:apply-templates select="folder|separator|bookmark"/>
+          <xsl:apply-templates select="bookmark|folder|separator"/>
         </dl>
         <script>
           var foldables = document.getElementsByClassName("foldable");
@@ -110,6 +109,19 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="/xbel//bookmark">
+    <dt>
+      <a href="{@href}">
+        <xsl:apply-templates select="@added|@modified"/>
+        <xsl:apply-templates select="info/metadata/moz:*"/>
+        <xsl:call-template name="value-of-or-default">
+          <xsl:with-param name="node" select="title"/>
+          <xsl:with-param name="default" select="@href"/>
+        </xsl:call-template>
+      </a>
+    </dt>
+  </xsl:template>
+
   <xsl:template match="/xbel//folder">
     <xsl:variable name="folded.class">
       <xsl:call-template name="folded-class">
@@ -137,8 +149,8 @@
       </h3>
     </dt>
     <dl class="item-list hideable {$hidden.class}">
-      <xsl:if test="folder|separator|bookmark">
-        <xsl:apply-templates select="folder|separator|bookmark"/>
+      <xsl:if test="bookmark|folder|separator">
+        <xsl:apply-templates select="bookmark|folder|separator"/>
       </xsl:if>
     </dl>
   </xsl:template>
@@ -147,38 +159,11 @@
     <hr></hr>
   </xsl:template>
 
-  <xsl:template match="/xbel//bookmark">
-    <dt>
-      <a href="{@href}">
-        <xsl:apply-templates select="@added|@modified"/>
-        <xsl:apply-templates select="info/metadata/moz:*"/>
-        <xsl:call-template name="value-of-or-default">
-          <xsl:with-param name="node" select="title"/>
-          <xsl:with-param name="default" select="@href"/>
-        </xsl:call-template>
-      </a>
-    </dt>
-  </xsl:template>
-
   <!-- Any XBEL metadata for Firefox. -->
   <xsl:template match="/xbel//metadata[@owner = 'http://www.mozilla.org/']/moz:*">
     <xsl:attribute name="{local-name(.)}">
       <xsl:value-of select="."/>
     </xsl:attribute>
-  </xsl:template>
-
-  <!-- When the folder was added. -->
-  <xsl:template match="/xbel//folder/@added">
-    <xsl:if test="$vendor.id = $vendor.libxslt.id or
-                  $vendor.id = $vendor.xalan.id or
-                  $vendor.id = $vendor.dotnet.id">
-      <xsl:attribute name="add_date">
-        <xsl:value-of select="ext:dateTimeToUnix(.)"/>
-      </xsl:attribute>
-      <xsl:attribute name="last_modified">
-        <xsl:value-of select="ext:dateTimeToUnix(.)"/>
-      </xsl:attribute>
-    </xsl:if>
   </xsl:template>
 
   <!-- When the bookmark was added. -->
@@ -203,12 +188,26 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- When the folder was added. -->
+  <xsl:template match="/xbel//folder/@added">
+    <xsl:if test="$vendor.id = $vendor.libxslt.id or
+                  $vendor.id = $vendor.xalan.id or
+                  $vendor.id = $vendor.dotnet.id">
+      <xsl:attribute name="add_date">
+        <xsl:value-of select="ext:dateTimeToUnix(.)"/>
+      </xsl:attribute>
+      <xsl:attribute name="last_modified">
+        <xsl:value-of select="ext:dateTimeToUnix(.)"/>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Value of a node or a default. -->
   <xsl:template name="value-of-or-default">
     <xsl:param name="node"/>
     <xsl:param name="default" select="''"/>
     <xsl:choose>
-      <xsl:when test="$node">
+      <xsl:when test="$node and $node != ''">
         <xsl:value-of select="$node"/>
       </xsl:when>
       <xsl:otherwise>

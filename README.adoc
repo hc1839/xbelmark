@@ -246,10 +246,8 @@ java -jar ${BASEDIR}/java/target/xbelmark-0.1.0-jar-with-dependencies.jar xslt \
   -IN bookmarks.xbel
 ----
 
-XSL parameters are passed differently between the Qt/.NET version and the Java
-version. For the Qt version, parameters are passed as `--param [name]=[value]`.
-For the Java version, parameters are passed as `-PARAM [name] [value]`. For
-both versions, the parameter value is not quoted. The available XSL parameters
+XSL parameters are passed the same among all versions as `--param [name]
+[value]` without the parameter value being quoted. The available XSL parameters
 with their default values in brackets are
 
 * `bookmarks.title` [`'Bookmarks'`]

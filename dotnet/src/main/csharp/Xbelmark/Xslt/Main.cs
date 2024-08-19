@@ -21,31 +21,35 @@ public static class Main
     /// Path to the input document.
     /// </param>
     /// <param name="paramList">
-    /// Name and value of each parameter as `[name]=[value]`.
+    /// Name and value of each parameter as alternating elements.
     /// </param>
     public static void Execute(
         string stylesheetPath, string inputDocPath, List<string> paramList)
     {
         var parameters = new Dictionary<string, string>();
-        foreach (string item in paramList) {
-            string[] param = item.Split("=", 2);
-            if (param.Length != 2) {
-                throw new ArgumentException(
-                    "Parameter is not in the form `[name]=[value]`.");
-            }
-            parameters.Add(param[0], param[1]);
+        if (paramList.Count % 2 != 0)
+        {
+            throw new ArgumentException(
+                "Name and value of each parameter are not as alternating " +
+                "elements.");
+        }
+        for (int i = 0; i != paramList.Count; i += 2)
+        {
+            parameters.Add(paramList[i], paramList[i + 1]);
         }
         var xslt = new XslCompiledTransform();
         xslt.Load(stylesheetPath);
         var xslArg = new XsltArgumentList();
-        foreach (KeyValuePair<string, string> item in parameters) {
+        foreach (KeyValuePair<string, string> item in parameters)
+        {
             xslArg.AddParam(item.Key, "", item.Value);
         }
         xslArg.AddExtensionObject(
             "xalan://io.github.hc1839.xbelmark.xslt.ext.DateTime",
             new Ext.DateTime());
         var transformBuilder = new StringBuilder();
-        using (XmlWriter xmlWriter = XmlWriter.Create(transformBuilder)) {
+        using (XmlWriter xmlWriter = XmlWriter.Create(transformBuilder))
+        {
             xslt.Transform(inputDocPath, xslArg, xmlWriter);
         }
         Console.WriteLine(transformBuilder.ToString());

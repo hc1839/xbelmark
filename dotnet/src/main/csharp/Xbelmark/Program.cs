@@ -34,9 +34,9 @@ public class Program
         var pasteCommand = new Command(
             "paste", "Paste a URL as a bookmark file.");
         rootCommand.AddCommand(pasteCommand);
-        var formatOption = new Option<string>(
+        var formatOption = new Option<Paste.Format>(
             name: "--format",
-            getDefaultValue: () => "XBEL",
+            getDefaultValue: () => Paste.Format.XBEL,
             description:
                 "Format of the output file. Valid values are `URL` (URL " +
                 "format used in Windows) and `XBEL` (XBEL format).");
@@ -84,7 +84,7 @@ public class Program
                     }
                     Paste.Main.Execute(
                         baseFileName,
-                        Enum.Parse<Paste.Format>(format),
+                        format,
                         new Uri(uri),
                         htmlTitle);
                 }
@@ -107,9 +107,10 @@ public class Program
         var paramOption = new Option<List<string>>(
             name: "--param",
             description:
-                "Name and value of each parameter as `[name]=[value]`.");
+                "Name and value of each parameter as `[name] [value]`.");
         xsltCommand.AddOption(paramOption);
         paramOption.Arity = ArgumentArity.ZeroOrMore;
+        paramOption.AllowMultipleArgumentsPerToken = true;
         xsltCommand.SetHandler((stylesheetPath, inputDocPath, paramList) =>
             {
                 try

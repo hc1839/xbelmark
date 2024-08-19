@@ -45,7 +45,7 @@ class CmdArgsParser::Impl final {
         "\n" +
         "      Path to the input document.\n\n";
     help = help +
-        "  --param [name]=[value]\n" +
+        "  --param [name] [value]\n" +
         "\n" +
         "      Name and value of a parameter.\n\n";
     help = help +
@@ -75,23 +75,12 @@ class CmdArgsParser::Impl final {
    */
   void AppendParam() {
     ++arg_it_;
-    if (arg_it_ == arg_last_) {
+    if (arg_last_ - arg_it_ < 2) {
       throw std::runtime_error("Insufficient arguments for `--param`.");
     }
-    const std::string arg(*arg_it_++);
-    const std::regex equal_re("=");
-    std::sregex_token_iterator token_begin(
-        arg.begin(), arg.end(), equal_re, -1);
-    std::sregex_token_iterator token_end;
-    std::vector<std::string> param;
-    for (auto iter = token_begin; iter != token_end; ++iter) {
-      param.push_back(*iter);
-    }
-    if (param.size() != 2) {
-      throw std::runtime_error(
-          "Argument for `--param` is not in the form `[name]=[value]`.");
-    }
-    cmd_args_->xslt_params[param[0]] = "'" + param[1] + "'";
+    const std::string name(*arg_it_++);
+    const std::string value(*arg_it_++);
+    cmd_args_->xslt_params[name] = "'" + value + "'";
   }
 
   /**

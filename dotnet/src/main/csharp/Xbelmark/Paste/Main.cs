@@ -35,6 +35,12 @@ public static class Main
                 baseFileName + "." + format.ToString().ToLower();
             string bookmarkFilePath = Path.Combine(
                 Directory.GetCurrentDirectory(), bookmarkFileName);
+            if (File.Exists(bookmarkFilePath))
+            {
+                ShowMessage.Error(
+                    "Bookmark with the same file name exists:\n" +
+                    bookmarkFilePath);
+            }
             using (var outputFile = new StreamWriter(bookmarkFilePath))
             {
                 outputFile.WriteLine(bookmarkText);

@@ -16,8 +16,9 @@ public class DateTime
     /// </param>
     /// <returns>
     /// Seconds since epoch.
-    /// <returns>
-    public long dateTimeToUnix(string input) {
+    /// </returns>
+    public long dateTimeToUnix(string input)
+    {
         DateTimeOffset dto;
         try
         {
