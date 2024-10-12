@@ -122,7 +122,7 @@ public class Paste {
    *  @param args
    *    Command-line arguments.
    */
-  public static void Execute(String[] args) {
+  public static void execute(String[] args) {
     // Parse the command-line options.
     CommandLine cmdline;
     try {

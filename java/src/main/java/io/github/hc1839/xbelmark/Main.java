@@ -24,10 +24,10 @@ public class Main {
         }
         break;
       case "paste":
-        Paste.Execute(Arrays.copyOfRange(args, 1, args.length));
+        Paste.execute(Arrays.copyOfRange(args, 1, args.length));
         break;
       case "xslt":
-        Xslt.Execute(Arrays.copyOfRange(args, 1, args.length));
+        Xslt.execute(Arrays.copyOfRange(args, 1, args.length));
         break;
       default:
         System.err.println("Invalid subcommand: `" + subcommand + "`.");

@@ -14,7 +14,7 @@ public class Xslt {
    *  @param args
    *    Command-line arguments.
    */
-  public static void Execute(String[] args) {
+  public static void execute(String[] args) {
     if (args.length == 1 && "--help".equals(args[0])) {
       Process.main(new String[0]);
     } else {
